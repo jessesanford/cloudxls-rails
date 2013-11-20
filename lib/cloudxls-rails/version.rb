@@ -1,5 +1,3 @@
-module CloudXLS
-  module Rails
-    VERSION = '0.3.1'
-  end
+module CloudXLSRails
+  VERSION = '0.4.0'
 end
