@@ -1,6 +1,6 @@
-# CloudXLSRails::CSVStream
+# CloudXLSRails::CSVResponder
 module CloudXLSRails
-  class CSVStream
+  class CSVResponder
     def initialize(controller, stream)
       @controller = controller
       @stream = stream
@@ -36,7 +36,7 @@ ActionController::Renderers.add :csv do |scope, options|
   columns  = options[:columns]
 
   if options[:stream] == true
-    CloudXLSRails::CSVStream.stream!(self, scope, options)
+    CloudXLSRails::CSVResponder.stream!(self, scope, options)
   else # no stream:
     data = CloudXLS::CSVWriter.text(scope, {:columns => columns})
 
@@ -49,7 +49,7 @@ end
 class ActionController::Responder
   def to_csv
     if options[:stream] == true
-      CloudXLSRails::CSVStream.stream!(controller, resources.last, options)
+      CloudXLSRails::CSVResponder.stream!(controller, resources.last, options)
     else
       controller.render({:csv => resources.last, :stream => false }.merge(options))
     end
