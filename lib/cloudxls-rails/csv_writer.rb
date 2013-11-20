@@ -50,7 +50,12 @@ module CloudXLS
 
       Enumerator.new do |row|
         if options[:skip_headers] != true
-          row << ::CSV.generate_line(csv_titles(columns, :titleize))
+          if scope.respond_to?(:column_names)
+            columns ||= scope.column_names
+          end
+          if columns
+            row << csv_titles(columns, :titleize).to_csv
+          end
         end
 
         enum = scope_enumerator(scope)
