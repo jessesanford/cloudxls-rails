@@ -6,13 +6,12 @@ end
 module CloudXLSRails
   class XLSResponder
     def self.redirect!(controller, scope, options)
-      columns  = options.fetch(:columns, nil)
       xdata = options[:data] || {}
       unless (xdata.has_key?(:text) ||
               xdata.has_key?(:url ) ||
               xdata.has_key?(:file)  )
 
-        xdata[:text] = CloudXLS::CSVWriter.text(scope, {:columns => columns})
+        xdata[:text] = CloudXLS::CSVWriter.text(scope, options)
       end
 
       xopts = {:data => xdata}

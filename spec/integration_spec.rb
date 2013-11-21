@@ -14,6 +14,13 @@ describe 'Request', :type => :request do
       :published => false)
   end
 
+  it "#as_csv" do
+    expect( @post.as_csv(except: [:unix_timestamp, :created_at, :updated_at]) ).to eq([@post.id, "hello world", 12_032, 0.24, "2013-12-24", "2013-12-25T12:30:30.000+0000", false])
+    expect( @post.as_csv(only: [:title]) ).to eq(["hello world"])
+    expect( @post.as_csv(only: [:title, :visits]) ).to eq(["hello world", 12_032])
+    expect( @post.as_csv(only: [:expired_at]) ).to eq(["2013-12-25T12:30:30.000+0000"])
+  end
+
   it "has a working test_app" do
     visit '/'
     page.should have_content "Users"
@@ -24,6 +31,14 @@ describe 'Request', :type => :request do
     page.should have_content [
       "Title,Visits,Conversion Rate,Published On,Published,Expired At",
       "hello world,12032,0.24,2013-12-24,false,2013-12-25T12:30:30.000+0000"
+    ].join("\n")
+  end
+
+  it "/posts/all_columns.csv streams csv" do
+    visit '/posts/all_columns.csv'
+    page.should have_content [
+      "Id,Title,Visits,Conversion Rate,Published On,Expired At,Published,Unix Timestamp,Created At,Updated At",
+      "1,hello world,12032,0.24,2013-12-24,2013-12-25T12:30:30.000+0000,false,2013-12-25T12:30:30.000+0000,#{@post.created_at.as_csv},#{@post.updated_at.as_csv}"
     ].join("\n")
   end
 

@@ -33,12 +33,11 @@ end
 
 ActionController::Renderers.add :csv do |scope, options|
   filename = options.fetch(:filename, "data-#{DateTime.now.to_s}.csv")
-  columns  = options[:columns]
 
   if options[:stream]
     CloudXLSRails::CSVResponder.stream!(self, scope, options)
   else # no stream:
-    data = CloudXLS::CSVWriter.text(scope, {:columns => columns})
+    data = CloudXLS::CSVWriter.text(scope, options)
 
     send_data data,
       type: Mime::CSV,

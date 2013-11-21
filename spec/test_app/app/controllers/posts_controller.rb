@@ -3,19 +3,23 @@ class PostsController < ApplicationController
 
   def index
     respond_with(Post.all,
-      :columns => export_attributes)
+      :only => export_attributes)
+  end
+
+  def all_columns
+    respond_with(Post.all.to_a)
   end
 
   def stream
     respond_with(Post.all,
       :stream => true,
-      :columns => export_attributes)
+      :only => export_attributes)
   end
 
   def stream_with_custom_url
     respond_with(Post.all,
       :stream => "/successful_redirect",
-      :columns => export_attributes)
+      :only => export_attributes)
   end
 
   # Used for stub/mocking a redirect request
