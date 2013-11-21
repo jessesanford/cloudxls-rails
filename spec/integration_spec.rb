@@ -58,11 +58,41 @@ describe 'Request', :type => :request do
 
     it "/posts/stream.xls has a working csv export" do
       CloudXLS.should_receive(:xpipe) { |options|
-        !options[:data][:url].end_with?("posts/stream.csv") &&
+        !options[:data][:url].ends_with?("posts/stream.csv") &&
           options.keys.length == 1
       }.and_return(OpenStruct.new(:url => "/successful_redirect"))
 
       visit '/posts/stream.xls'
+      page.should have_content("OK")
+    end
+  end
+
+  describe "/posts/stream_with_custom_url" do
+    it "/posts/stream_with_custom_url.csv should xpipe with csv url" do
+      visit '/posts/stream_with_custom_url.csv'
+      page.should have_content [
+        "Title,Visits,Conversion Rate,Published On,Published,Expired At",
+        "hello world,12032,0.24,2013-12-24,false,2013-12-25T12:30:30.000+0000"
+      ].join("\n")
+    end
+
+    it "/posts/stream_with_custom_url.xls will redirect to custom url" do
+      CloudXLS.should_receive(:xpipe) { |options|
+        !options[:data][:url].ends_with?("successful_redirect") &&
+          options.keys.length == 1
+      }.and_return(OpenStruct.new(:url => "/successful_redirect"))
+
+      visit '/posts/stream_with_custom_url.xls'
+      page.should have_content("OK")
+    end
+
+    it "/posts/stream_with_custom_url.xlsx will redirect to custom url" do
+      CloudXLS.should_receive(:xpipe) { |options|
+        !options[:data][:url].ends_with?("successful_redirect") &&
+          options.keys.length == 1
+      }.and_return(OpenStruct.new(:url => "/successful_redirect"))
+
+      visit '/posts/stream_with_custom_url.xlsx'
       page.should have_content("OK")
     end
   end

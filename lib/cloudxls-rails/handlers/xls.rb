@@ -29,10 +29,20 @@ end
 # For respond_to default
 class ActionController::Responder
   def to_xls
-    if options[:stream] == true
+    stream = options.delete(:stream) || false
+    if stream # either string or boolean
       options[:data] ||= {}
-      options[:data][:url] ||= controller.request.url.gsub(/xls\Z/, "csv")
+      options[:data][:url] ||= cloudxls_stream_url(stream, 'xls')
     end
     CloudXLSRails::XLSResponder.redirect!(controller, resources.last, options)
+  end
+
+protected
+  def cloudxls_stream_url(stream, extension = 'xls')
+    if stream == true
+      controller.request.url.gsub(/#{extension}\Z/, "csv")
+    else
+      stream.to_s
+    end
   end
 end

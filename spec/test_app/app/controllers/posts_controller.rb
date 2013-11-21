@@ -2,11 +2,20 @@ class PostsController < ApplicationController
   respond_to :csv, :xls, :xlsx, :html
 
   def index
-    respond_with(Post.all, :columns => export_attributes)
+    respond_with(Post.all,
+      :columns => export_attributes)
   end
 
   def stream
-    respond_with(Post.all, :stream => true, :columns => export_attributes)
+    respond_with(Post.all,
+      :stream => true,
+      :columns => export_attributes)
+  end
+
+  def stream_with_custom_url
+    respond_with(Post.all,
+      :stream => "/successful_redirect",
+      :columns => export_attributes)
   end
 
   # Used for stub/mocking a redirect request
